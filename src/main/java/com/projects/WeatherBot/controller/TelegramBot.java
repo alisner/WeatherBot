@@ -38,24 +38,22 @@ public class TelegramBot extends TelegramLongPollingBot {
             String memberName = update.getMessage().getFrom().getFirstName();
 
             if (messageText.startsWith("/")) {
-                switch (messageText) {
-                    case "/start":
-                        startBot(chatId, memberName);
-                        break;
-                    default:
-                        log.info("Unexpected message");
+                if (messageText.equals("/start")) {
+                    startBot(chatId, memberName);
+                } else {
+                    log.info("Неизвестная команда");
                 }
             }
             else { // Поиск погоды по городу
                 WeatherData weatherData = weatherService.getCurrentWeatherByName(messageText);
                 if (weatherData.getMain() != null) {
                     String text = "Город: " + weatherData.getName() +
-                            "\nТемпература: " + weatherData.getMain().getTemp() +
-                            "\nОщущается как: " + weatherData.getMain().getFeels_like() +
+                            "\nТемпература: " + weatherData.getMain().getTemp() + " °C" +
+                            "\nОщущается как: " + weatherData.getMain().getFeels_like() + " °C" +
                             "\nПогода: " + weatherData.getWeather().get(0).getDescription() +
-                            "\nВлажность: " + weatherData.getMain().getHumidity() +
-                            "\nВетер: " + weatherData.getWind().getSpeed() +
-                            "\nДавление: " + weatherData.getMain().getPressure();
+                            "\nВлажность: " + weatherData.getMain().getHumidity() + "%" +
+                            "\nВетер: " + weatherData.getWind().getSpeed() + " м/с" +
+                            "\nДавление: " + weatherData.getMain().getPressure() + " мм рт. ст.";
                     sendMessage(chatId, text);
                 }
                 else {
